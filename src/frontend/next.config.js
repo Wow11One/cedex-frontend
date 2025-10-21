@@ -5,7 +5,7 @@ const nextConfig = {
     return [
       {
         source: "/",
-        destination: "/market",
+        destination: "/dashboard",
         permanent: false,
       },
       {
@@ -22,7 +22,7 @@ const nextConfig = {
         hostname: "raw.githubusercontent.com",
       },
     ],
-  }
+  },
 };
 
 module.exports = nextConfig;

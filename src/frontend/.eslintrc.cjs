@@ -22,7 +22,10 @@ const config = {
     "simple-import-sort",
   ],
   rules: {
-    "no-console": [ process.env.TS_DEBUG === "true" ? "warn" : "error", { allow: ["error", "warn"],  }],
+    "no-console": [
+      process.env.TS_DEBUG === "true" ? "warn" : "error",
+      { allow: ["error", "warn"] },
+    ],
     "no-unused-vars": "off",
     "no-var-requires": "off",
     "@typescript-eslint/ban-ts-comment": "off",
@@ -37,6 +40,12 @@ const config = {
     ],
     "simple-import-sort/imports": "warn",
     "simple-import-sort/exports": "warn",
+    "prettier/prettier": [
+      "error",
+      {
+        endOfLine: "auto",
+      },
+    ],
   },
 };
 

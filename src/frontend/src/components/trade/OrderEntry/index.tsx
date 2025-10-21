@@ -6,6 +6,7 @@ import { type Side } from "@/types/global";
 
 import { LimitOrderEntry } from "./LimitOrderEntry";
 import { MarketOrderEntry } from "./MarketOrderEntry";
+import { CustomSelect } from "@/components/Select";
 
 export const OrderEntry: React.FC<{
   marketData: ApiMarket;
@@ -14,42 +15,71 @@ export const OrderEntry: React.FC<{
 }> = ({ marketData, defaultSide = "buy", onDepositWithdrawClick }) => {
   const [side, setSide] = useState<Side>(defaultSide);
 
+  const [tab, setTab] = useState<"Market" | "Limit">("Market");
+
   return (
-    <div>
-      <div className="flex gap-2 md:m-4">
-        <button
-          onClick={() => setSide("buy")}
-          className={`w-full border-2 py-2 font-jost font-bold ${
-            side === "buy"
-              ? "border-green border-opacity-80 text-green"
-              : "border-neutral-600 bg-neutral-700 text-neutral-600"
+    <div className="flex flex-1 grow flex-col">
+      <div className="mt-3 grid grid-cols-2 gap-2 md:mx-4">
+        <CustomSelect
+          options={["Cross", "Fit", "Club"]}
+          value="Cross"
+          onChange={() => {}}
+          padding="py-1.5 px-2"
+        />
+        <CustomSelect
+          options={[
+            "1x",
+            "2x",
+            "5x",
+            "10x",
+            "20x",
+            "25x",
+            "30x",
+            "50x",
+            "100x",
+          ]}
+          value="20x"
+          onChange={() => {}}
+          padding="py-1.5 px-2"
+        />
+      </div>
+
+      <div className="mt-3 grid grid-cols-2 font-roboto-mono text-base text-white md:mx-4">
+        <div
+          className={`flex cursor-pointer items-center justify-center rounded-t-md p-2.5 transition-colors ${
+            tab === "Market"
+              ? "border-b-[3px] border-greenPrimary bg-greenPrimary/20 text-greenPrimary"
+              : "border-b border-greenSecondary hover:border-b-2"
           }`}
+          onClick={() => setTab("Market")}
         >
-          Buy
-        </button>
-        <button
-          onClick={() => setSide("sell")}
-          className={`w-full border-2 font-jost font-bold ${
-            side === "sell"
-              ? "border-red border-opacity-80 text-red"
-              : "border-neutral-600 bg-neutral-700 text-neutral-600"
+          Market
+        </div>
+        <div
+          className={`flex cursor-pointer items-center justify-center rounded-t-md p-2.5 transition-colors ${
+            tab === "Limit"
+              ? "border-b-[3px] border-greenPrimary bg-greenPrimary/20 text-greenPrimary"
+              : "border-b border-greenSecondary hover:border-b-2"
           }`}
+          onClick={() => setTab("Limit")}
         >
-          Sell
-        </button>
+          Limit
+        </div>
+      </div>
+
+      <div className="mt-3 grid grid-cols-2 rounded-md bg-greenTertiary p-1 font-roboto-mono text-base text-white md:mx-4">
+        <div className="flex items-center justify-center whitespace-nowrap rounded-md bg-greenPrimary px-2.5 py-2 font-medium text-black">
+          Buy/Long
+        </div>
+        <div className="flex items-center justify-center font-roboto-mono">
+          Sell/Short
+        </div>
       </div>
       <Tab.Group>
-        <Tab.List className="my-5 flex justify-center gap-[31.25px]">
-          <Tab className="font-roboto-mono text-sm uppercase outline-none ui-selected:font-medium ui-selected:text-white ui-not-selected:font-light ui-not-selected:text-neutral-500">
-            Limit
-          </Tab>
-          <Tab className="font-roboto-mono text-sm uppercase outline-none ui-selected:font-medium ui-selected:text-white ui-not-selected:font-light ui-not-selected:text-neutral-500">
-            Market
-          </Tab>
-        </Tab.List>
         <Tab.Panels>
           <Tab.Panel>
             <LimitOrderEntry
+              tab={tab}
               marketData={marketData}
               side={side}
               onDepositWithdrawClick={onDepositWithdrawClick}

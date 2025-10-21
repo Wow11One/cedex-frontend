@@ -35,7 +35,13 @@
   }
 
   .add-new-account-bg {
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.67) 58.85%, rgba(0, 0, 0, 0.85) 76.56%, #000 100%);
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.67) 58.85%,
+      rgba(0, 0, 0, 0.85) 76.56%,
+      #000 100%
+    );
   }
 
   @keyframes flash-bg {
@@ -46,7 +52,6 @@
 }
 
 @layer base {
-
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"] {

@@ -1,12 +1,12 @@
 import { type Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
-let colors = require('tailwindcss/colors')
-delete colors['lightBlue']
-delete colors['warmGray']
-delete colors['trueGray']
-delete colors['coolGray']
-delete colors['blueGray']
-colors = { ...colors, ...{ transparent: 'transparent' } }
+let colors = require("tailwindcss/colors");
+delete colors["lightBlue"];
+delete colors["warmGray"];
+delete colors["trueGray"];
+delete colors["coolGray"];
+delete colors["blueGray"];
+colors = { ...colors, ...{ transparent: "transparent" } };
 
 const config = {
   content: [
@@ -40,8 +40,16 @@ const config = {
       blue: "#086cd9",
       "light-blue": "#62c6f8",
       green: "#6ed5a3",
+      greenPrimary: "#01FE91",
+      greenSecondary: "#09442B",
+      greenTertiary: "#002314",
+      greenBackground: "#011919",
+      gray: "#828282",
+      graySecondary: "#808080",
       yellow: "#eef081",
       red: "#d56e6e",
+      redPrimary: "#F92A2A",
+      redSecondary: "#E10000",
       neutral: {
         100: "#FFFFFF",
         200: "#F9F9F9",
@@ -56,14 +64,14 @@ const config = {
 
     keyframes: {
       fadeIn: {
-        '0%': { opacity: '0' },
-        '50%': { opacity: '1' },
-        '100%': { opacity: '1' },
-      }
+        "0%": { opacity: "0" },
+        "50%": { opacity: "1" },
+        "100%": { opacity: "1" },
+      },
     },
     animation: {
-      fadeIn: 'fadeIn 2s ease-in-out forwards',
-    }
+      fadeIn: "fadeIn 2s ease-in-out forwards",
+    },
   },
   plugins: [require("@headlessui/tailwindcss")],
 } satisfies Config;

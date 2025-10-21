@@ -17,7 +17,7 @@ export const Button: React.FC<
 }) => {
   const variantStyle =
     variant === "primary"
-      ? "bg-neutral-100 text-neutral-800 font-bold"
+      ? "bg-greenPrimary text-greenBackground font-bold rounded-md"
       : variant === "green"
       ? "bg-green text-neutral-800 font-bold"
       : variant === "red"
@@ -25,8 +25,8 @@ export const Button: React.FC<
       : variant === "blue"
       ? "bg-blue text-neutral-800 font-bold"
       : variant === "outlined"
-      ? "bg-neutral-800 text-neutral-100 ring-1 ring-neutral-100 font-medium"
-      : "bg-neutral-700 text-neutral-100 font-medium"; // secondary
+      ? "bg-transparent text-neutral-100 transition-colors hover:text-greenPrimary border-b"
+      : "bg-greenTertiary rounded-md text-greenPrimary border border-greenPrimary transition-colors hover:bg-greenSecondary"; // secondary
   const [loading, setLoading] = useState(false);
 
   return (

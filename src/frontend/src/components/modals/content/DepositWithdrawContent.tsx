@@ -55,7 +55,7 @@ const SelectCoinInput: React.FC<{
             <ChevronDownIcon className="h-[18.06px] w-[17px] fill-white" />
           </div>
         </Menu.Button>
-        <Menu.Items className="absolute right-[-1px] top-[calc(100%+16px)]  border border-neutral-600 bg-neutral-800  bg-noise ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Menu.Items className="absolute right-[-1px] top-[calc(100%+16px)]  border border-neutral-600 bg-greenBackground ring-1 ring-black ring-opacity-5 focus:outline-none">
           {coins.map((coin) => (
             <Menu.Item
               as="div"

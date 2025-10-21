@@ -2,7 +2,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import React, { Fragment, type PropsWithChildren } from "react";
 
-import bg from "../../../public/bg.png";
 import { XIcon } from "../icons/XIcon";
 
 export const BaseModal: React.FC<
@@ -50,11 +49,10 @@ export const BaseModal: React.FC<
             <Dialog.Panel
               className={`w-full
               ${className} ${
-                hoveringOnCloseButton ? "border-blue" : "border-neutral-600 "
-              } max-w-4xl transform border bg-black p-6 align-middle shadow-xl transition-all`}
-              style={{
-                backgroundImage: `url(${bg.src})`,
-              }}
+                hoveringOnCloseButton
+                  ? "border-greenPrimary"
+                  : "border-graySecondary"
+              } max-w-4xl transform border bg-greenBackground p-6 align-middle shadow-xl transition-all`}
             >
               <Dialog.Title as="div">
                 {showBackButton && (
@@ -68,10 +66,10 @@ export const BaseModal: React.FC<
                 )}
                 {showCloseButton && (
                   <div
-                    className={`hover:bg-blue-100 absolute right-0 top-0 !z-50 flex h-[50px] w-[50px] cursor-pointer items-center justify-center border-b border-l bg-black bg-noise transition-all [&>svg>path]:stroke-neutral-500 [&>svg>path]:transition-all [&>svg>path]:hover:stroke-neutral-100 ${
+                    className={`hover:bg-blue-100 absolute right-0 top-0 !z-50 flex h-[50px] w-[50px] cursor-pointer items-center justify-center border-b border-l bg-greenBackground transition-all [&>svg>path]:stroke-neutral-500 [&>svg>path]:transition-all [&>svg>path]:hover:stroke-neutral-100 ${
                       hoveringOnCloseButton
-                        ? "border-b-blue border-l-blue bg-blue"
-                        : "border-b-neutral-600 border-l-neutral-600"
+                        ? "border-b-greenPrimary border-l-greenPrimary bg-blue"
+                        : "border-b-graySecondary border-l-graySecondary"
                     }`}
                     onClick={onClose}
                     onMouseEnter={() => setHoveringOnCloseButton(true)}

@@ -13,7 +13,7 @@ import { DAY_BY_RESOLUTION, MS_IN_ONE_DAY } from "@/hooks/useChartData";
 import {
   type ChartContainerProps,
   type TVChartContainerProps,
-} from "@/pages/market/[market_id]";
+} from "@/pages/dashboard/[market_id]";
 import { type ApiMarket, type MarketData } from "@/types/api";
 import { toDecimalPrice, toDecimalSize } from "@/utils/econia";
 import { getAllDataInTimeRange, getClientTimezone } from "@/utils/helpers";
@@ -86,7 +86,7 @@ export const TVChartContainer: React.FC<
             (market: ApiMarket | MarketData) => market.name == symbolName,
           );
           if (market) {
-            router.push(`/market/${market.market_id}`);
+            router.push(`/dashboard/${market.market_id}`);
           }
         }
         const symbol = `${symbolName}`;

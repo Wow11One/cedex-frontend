@@ -20,7 +20,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { type AppProps } from "next/app";
-import { Jost, Roboto_Mono } from "next/font/google";
+import { Jost, Roboto_Mono, IBM_Plex_Mono } from "next/font/google";
 import { PetraWallet } from "petra-plugin-wallet-adapter";
 import { useMemo } from "react";
 import { SkeletonTheme } from "react-loading-skeleton";
@@ -31,8 +31,6 @@ import UnConnectedNotice from "@/components/modals/flows/UnConnectedNotice";
 import { AptosContextProvider } from "@/contexts/AptosContext";
 import { ConnectWalletContextProvider } from "@/contexts/ConnectWalletContext";
 import { store } from "@/store/store";
-
-import bg from "../../public/bg.png";
 
 Chart.register(
   CategoryScale,
@@ -45,7 +43,7 @@ Chart.register(
   Legend,
 );
 
-Chart.defaults.font.family = "Roboto Mono";
+Chart.defaults.font.family = "IBM Plex Mono";
 Chart.defaults.animation = false;
 
 const jost = Jost({
@@ -56,6 +54,12 @@ const jost = Jost({
 const robotoMono = Roboto_Mono({
   subsets: ["latin"],
   variable: "--font-roboto-mono",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  variable: "--font-ibm-plex-mono",
+  weight: ["400", "500", "600", "700"], // pick weights you need
 });
 
 const queryClient = new QueryClient();
@@ -74,17 +78,16 @@ export default function App({ Component, pageProps }: AppProps) {
     <SkeletonTheme baseColor="#202020" highlightColor="#444">
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
-          <AptosWalletAdapterProvider plugins={wallets} autoConnect>
+          <AptosWalletAdapterProvider plugins={wallets} autoConnect={false}>
             <AptosContextProvider>
               <ConnectWalletContextProvider>
                 <style jsx global>{`
                   body {
-                    background-color: #020202;
-                    background-image: url(${bg.src});
+                    background-color: #011919;
                   }
                   :root {
                     --font-jost: ${jost.style.fontFamily};
-                    --font-roboto-mono: ${robotoMono.style.fontFamily};
+                    --font-roboto-mono: ${ibmPlexMono.style.fontFamily};
                     --toastify-color: #020202;
                     --toastify-color-info: #62c6f8;
                     --toastify-color-success: #6ed5a3;
@@ -94,7 +97,7 @@ export default function App({ Component, pageProps }: AppProps) {
                     --toastify-icon-color-success: #6ed5a3;
                     --toastify-icon-color-error: #d56e6e;
                     --toastify-icon-color-warning: #eef081;
-                    --toastify-font-family: ${robotoMono.style.fontFamily};
+                    --toastify-font-family: ${ibmPlexMono.style.fontFamily};
                     --toastify-color-dark: #020202;
                     --toastify-toast-background: #020202;
                   }
@@ -105,7 +108,7 @@ export default function App({ Component, pageProps }: AppProps) {
                 `}</style>
                 <div>
                   <Component {...pageProps} />
-                  <UnConnectedNotice />
+                  {/* <UnConnectedNotice /> */}
                 </div>
               </ConnectWalletContextProvider>
             </AptosContextProvider>

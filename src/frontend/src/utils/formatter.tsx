@@ -157,6 +157,17 @@ export function shorten(str: string | undefined, maxLen = 10) {
   return str.substr(0, maxLen) + "..";
 }
 
+export function shortenAddress(str: string | undefined) {
+  if (str == undefined) return "";
+  let res = "";
+  if (str.length >= 5) {
+    res +=
+      str.substring(0, 6) + "..." + str.substring(str.length - 4, str.length);
+  }
+
+  return res;
+}
+
 /**
  * Formats a number or string by rounding it to a specified number of decimal places.
  *

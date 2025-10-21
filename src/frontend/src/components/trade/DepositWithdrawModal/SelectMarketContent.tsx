@@ -297,7 +297,7 @@ export const SelectMarketContent: React.FC<{
 
         <Tab.Panels className="scrollbar-none w-full overflow-y-scroll">
           <table className="w-full table-fixed">
-            <thead className="sticky top-0 z-10 h-16 bg-neutral-800 bg-noise pt-4">
+            <thead className="sticky top-0 z-10 h-16 bg-greenBackground pt-4">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr className="m-auto h-8 pt-4" key={headerGroup.id}>
                   {headerGroup.headers.map((header, i) => {
@@ -370,7 +370,7 @@ export const SelectMarketContent: React.FC<{
                       if (onSelectMarket != null) {
                         onSelectMarket(marketId, marketId.toString());
                       }
-                      router.push(`/market/${marketId}`);
+                      router.push(`/dashboard/${marketId}`);
                     }}
                   >
                     {row.getVisibleCells().map((cell) => (

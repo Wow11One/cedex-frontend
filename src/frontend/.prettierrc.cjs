@@ -7,6 +7,7 @@ const config = {
   trailingComma: "all",
   printWidth: 80,
   arrowParens: "always",
+  endOfLine: "auto",
   plugins: [require("prettier-plugin-tailwindcss")],
 };
 

@@ -4,51 +4,19 @@ export const ExitIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({
 }) => {
   return (
     <svg
-      width="17"
-      height="13"
-      viewBox="0 0 17 13"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
       className={className}
       id={id}
     >
-      <g clipPath="url(#clip0_5168_6230)">
-        <path
-          d="M6.79064 6.97449L14.1614 6.95776"
-          stroke="white"
-          strokeLinecap="square"
-        />
-        <path
-          d="M10.814 3.38672L14.4018 6.97457L10.814 10.5624"
-          stroke="white"
-          strokeLinecap="square"
-        />
-      </g>
-      <line
-        x1="0.858643"
-        y1="1.38599"
-        x2="9.26695"
-        y2="1.38599"
-        stroke="white"
+      <path
+        d="M10.6667 11.3333L14 8M14 8L10.6667 4.66667M14 8H6M6 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H6"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      <line x1="0.858643" y1="11.7" x2="9.26695" y2="11.7" stroke="white" />
-      <line
-        x1="0.957764"
-        y1="12.2"
-        x2="0.957763"
-        y2="0.966275"
-        stroke="white"
-      />
-      <defs>
-        <clipPath id="clip0_5168_6230">
-          <rect
-            width="8.07272"
-            height="8.07272"
-            fill="white"
-            transform="translate(16.3044 6.97437) rotate(135)"
-          />
-        </clipPath>
-      </defs>
     </svg>
   );
 };

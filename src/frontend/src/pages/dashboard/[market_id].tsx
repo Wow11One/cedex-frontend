@@ -2,7 +2,6 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import Script from "next/script";
 import React, { useEffect, useMemo, useState } from "react";
 
 import { DepthChart } from "@/components/DepthChart";
@@ -19,6 +18,7 @@ import { OrderEntryContextProvider } from "@/contexts/OrderEntryContext";
 import { useOrderBook } from "@/hooks/useOrderbook";
 import type { ApiMarket } from "@/types/api";
 import { getAllMarket } from "@/utils/helpers";
+import Footer from "@/components/Footer";
 
 type Props = {
   marketData: ApiMarket;
@@ -37,49 +37,37 @@ export interface TVChartContainerProps {
   allMarketData: ApiMarket[];
 }
 
-let ChartContainer = dynamic(
-  () => {
-    try {
-      // We call `require` here for the private charting library before
-      // to facilitate SSR with a fallback to the lightweight library.
-      // If the import fails, the `catch` block is executed and we
-      // load the `LightweightChartsContainer` instead.
-      // If the library is present, the TVChartContainer component will
-      // be used, and it will load the `charting_library` module from the
-      // cache with its `require(...)`.
-      //
-      // NOTE: We must use `require` here instead of a dynamic `import`
-      // to circumvent the SSR build process failing due to an invalid path.
-      // With `import` the provided path is statically resolved at build time
-      // whereas with `require`, path resolution is deferred until runtime and can
-      // thus be conditionally resolved within a `try/catch` block.
-      require("../../../public/static/charting_library");
-      return import("@/components/trade/TVChartContainer").then(
-        (mod) => mod.TVChartContainer,
-      );
-    } catch (e) {
-      console.warn("\nFailed to load `charting_library`.");
-      console.warn("Using `lightweight-charts` instead...");
-      return import("@/components/trade/LightweightChartsContainer").then(
-        (mod) => mod.LightweightChartsContainer,
-      );
-    }
-  },
-  { ssr: true },
-);
+const getChartContainer = () =>
+  dynamic(
+    async () => {
+      try {
+        return (await import("@/components/trade/LightweightChartsContainer"))
+          .LightweightChartsContainer;
+      } catch {
+        console.warn("Fallback to lightweight chart");
+        return (await import("@/components/trade/LightweightChartsContainer"))
+          .LightweightChartsContainer;
+      }
+    },
+    { ssr: false },
+  );
 
 export default function Market({ allMarketData, marketData }: Props) {
+  const ChartContainer = useMemo(() => getChartContainer(), []);
   const router = useRouter();
 
   const [tab, setTab] = useState<"orders" | "order-book" | "trade-histories">(
     "orders",
   );
+
+  const [newTab, setNewTab] = useState<
+    "Positions" | "Open orders" | "Orders history"
+  >("Positions");
+
   const [depositWithdrawModalOpen, setDepositWithdrawModalOpen] =
     useState<boolean>(false);
   const [walletButtonModalOpen, setWalletButtonModalOpen] =
     useState<boolean>(false);
-
-  const [isScriptReady, setIsScriptReady] = useState(false);
 
   useEffect(() => {
     if (router.query.lwc === "true") {
@@ -87,12 +75,6 @@ export default function Market({ allMarketData, marketData }: Props) {
       // for testing and debugging, so we don't need to check if the library is already loaded.
       console.warn(
         "Force loading LightweightChartsContainer. Avoid loading both libraries in production.",
-      );
-      // In a production app, you should load one or the other.
-      ChartContainer = dynamic(async () =>
-        import("@/components/trade/LightweightChartsContainer").then(
-          (mod) => mod.LightweightChartsContainer,
-        ),
       );
     }
   }, [router.query]);
@@ -143,31 +125,54 @@ export default function Market({ allMarketData, marketData }: Props) {
   return (
     <OrderEntryContextProvider>
       <Head>
-        <title>{`${marketData.name} | Econia`}</title>
+        <title>{`${marketData.name} | Cedex`}</title>
       </Head>
-      <div className="scrollbar-none flex h-screen flex-col">
+      <div className="flex min-h-screen flex-col">
         <Header
           logoHref={`${allMarketData[0].market_id}`}
           onDepositWithdrawClick={() => setDepositWithdrawModalOpen(true)}
           onWalletButtonClick={() => setWalletButtonModalOpen(true)}
         />
-        {isScriptReady && (
-          <StatsBar allMarketData={allMarketData} selectedMarket={marketData} />
-        )}
-        <main className="flex h-full min-h-[680px] w-full grow flex-col gap-3 p-3 md:flex-row">
-          <div className="flex flex-col gap-3 pb-0 md:w-[calc(100%-296px)] lg:w-[calc(100%-564px)]">
-            <div className=" flex grow flex-col border border-neutral-600">
-              <div className="flex h-full min-h-[400px] md:min-h-[unset]">
-                {isScriptReady && <ChartContainer {...defaultTVChartProps} />}
-              </div>
 
-              <div className="hidden h-[140px] tall:block">
-                <DepthChart marketData={marketData} />
+        <main className="flex h-full w-full grow flex-col gap-3 p-3 md:flex-row">
+          <div className="flex min-h-[680px] flex-col gap-3 pb-0 md:w-[calc(100%-296px)] lg:w-[calc(100%-292px)]">
+            <div className="flex flex-1 gap-3">
+              <div className="flex grow flex-col">
+                <StatsBar
+                  allMarketData={allMarketData}
+                  selectedMarket={marketData}
+                />
+                <div className="flex h-full min-h-[400px] md:min-h-[unset]">
+                  <ChartContainer {...defaultTVChartProps} />
+                </div>
+
+                <div className="hidden h-[140px] tall:block">
+                  <DepthChart marketData={marketData} />
+                </div>
+              </div>
+              <div className="hidden w-[292px] lg:flex">
+                <div className="flex w-full flex-col">
+                  <OrderbookTable
+                    marketData={marketData}
+                    data={orderbookData}
+                    isFetching={orderbookIsFetching}
+                    isLoading={orderbookIsLoading}
+                  />
+                </div>
               </div>
             </div>
-            <div className="flex h-[260px] max-w-full flex-col border border-neutral-600">
-              <div className="flex h-[30px] items-center gap-4 pl-4 pt-2 lg:pl-0 lg:pt-[6px]">
-                <div className="flex gap-4 py-1 text-base lg:py-3 lg:pl-[17.19px]">
+
+            <div className="my-2 flex max-w-full flex-col lg:hidden">
+              <OrderbookTable
+                marketData={marketData}
+                data={orderbookData}
+                isFetching={orderbookIsFetching}
+                isLoading={orderbookIsLoading}
+              />
+            </div>
+            <div className="flex min-h-[200px] max-w-full flex-col">
+              <div className="flex items-center gap-4  pt-2  lg:pt-[6px]">
+                {/* <div className="flex gap-4 py-1 text-base lg:py-3 lg:pl-[17.19px]">
                   <p
                     onClick={() => setTab("orders")}
                     className={`cursor-pointer font-jost font-bold ${
@@ -194,6 +199,51 @@ export default function Market({ allMarketData, marketData }: Props) {
                   >
                     Trade History
                   </p>
+                </div> */}
+
+                <div className="mt-3 grid grid-cols-3 font-roboto-mono text-sm text-white md:mx-4 lg:text-base">
+                  <button
+                    key={"Positions"}
+                    className={`flex cursor-pointer items-center justify-center whitespace-nowrap rounded-t-md px-14 py-2.5 transition-colors ${
+                      newTab === "Positions"
+                        ? "border-b-[3px] border-greenPrimary bg-greenPrimary/20 text-greenPrimary"
+                        : "border-b border-greenSecondary hover:border-b-2"
+                    }`}
+                    // onClick={(event) => {
+                    //   event.preventDefault();
+                    //   setNewTab("Positions");
+                    // }}
+                  >
+                    Positions
+                  </button>
+                  <button
+                    key={"Open orders"}
+                    className={`flex cursor-pointer items-center justify-center whitespace-nowrap rounded-t-md transition-colors ${
+                      newTab === "Open orders"
+                        ? "border-b-[3px] border-greenPrimary bg-greenPrimary/20 text-greenPrimary"
+                        : "border-b border-greenSecondary hover:border-b-2"
+                    }`}
+                    // onClick={(event) => {
+                    //   event.preventDefault();
+                    //   setNewTab("Open orders");
+                    // }}
+                  >
+                    Open orders
+                  </button>
+                  <button
+                    key={"Orders history"}
+                    className={`flex cursor-pointer items-center justify-center whitespace-nowrap rounded-t-md transition-colors ${
+                      newTab === "Orders history"
+                        ? "border-b-[3px] border-greenPrimary bg-greenPrimary/20 text-greenPrimary"
+                        : "border-b border-greenSecondary hover:border-b-2"
+                    }`}
+                    // onClick={(event) => {
+                    //   event.preventDefault();
+                    //   setNewTab("Orders history");
+                    // }}
+                  >
+                    Orders history
+                  </button>
                 </div>
               </div>
 
@@ -203,7 +253,7 @@ export default function Market({ allMarketData, marketData }: Props) {
                   marketData={marketData}
                 />
               )}
-              {tab === "trade-histories" && (
+              {/* {tab === "trade-histories" && (
                 <div className="h-full overflow-hidden">
                   <TradeHistoryTable
                     marketData={marketData}
@@ -218,29 +268,17 @@ export default function Market({ allMarketData, marketData }: Props) {
                   isFetching={orderbookIsFetching}
                   isLoading={orderbookIsLoading}
                 />
-              )}
+              )} */}
             </div>
           </div>
-          <div className="hidden w-[254px] lg:flex">
-            <div className="flex w-full flex-col border border-neutral-600">
-              <OrderbookTable
-                marketData={marketData}
-                data={orderbookData}
-                isFetching={orderbookIsFetching}
-                isLoading={orderbookIsLoading}
-              />
-            </div>
-          </div>
-          <div className="hidden w-[284px] flex-col md:flex">
-            <div className="border border-neutral-600">
-              <OrderEntry
-                marketData={marketData}
-                onDepositWithdrawClick={() => setDepositWithdrawModalOpen(true)}
-              />
-            </div>
-            <div className="scrollbar-none mt-3 h-full max-h-full grid-rows-none overflow-hidden border border-neutral-600">
-              <p className=" top-0 flex h-[30px] items-end bg-neutral-800 bg-noise pl-[17.03px] font-jost font-bold text-white">
-                Trade History
+          <div className="hidden w-[292px] flex-col md:flex">
+            <OrderEntry
+              marketData={marketData}
+              onDepositWithdrawClick={() => setDepositWithdrawModalOpen(true)}
+            />
+            <div className="scrollbar-none my-4 flex h-full max-h-full grid-rows-none flex-col justify-center overflow-hidden">
+              <p className=" flex  h-[30px] items-end border-b border-greenSecondary bg-greenBackground pb-1 pl-[17.03px]  font-roboto-mono text-white">
+                Account Equity
               </p>
               <TradeHistoryTable
                 marketData={marketData}
@@ -253,6 +291,8 @@ export default function Market({ allMarketData, marketData }: Props) {
             onDepositWithdrawClick={() => setDepositWithdrawModalOpen(true)}
           />
         </main>
+
+        <Footer />
       </div>
       {/* temp */}
       <DepositWithdrawFlowModal
@@ -270,13 +310,6 @@ export default function Market({ allMarketData, marketData }: Props) {
           setWalletButtonModalOpen(false);
         }}
         allMarketData={allMarketData}
-      />
-      <Script
-        src="/static/datafeeds/udf/dist/bundle.js"
-        strategy="lazyOnload"
-        onReady={() => {
-          setIsScriptReady(true);
-        }}
       />
     </OrderEntryContextProvider>
   );

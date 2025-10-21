@@ -74,7 +74,6 @@ const ResolutionSelector = (props: ResolutionSelectorProps) => {
         position: "absolute",
         top: "1ch",
         left: "1ch",
-        background: showDropdown ? "#000000ee" : "#00000000",
         color: hoveringSelector ? "lightgrey" : "white",
         zIndex: 3,
         cursor: "pointer",
@@ -82,7 +81,21 @@ const ResolutionSelector = (props: ResolutionSelectorProps) => {
       className="timeframe-selector font-roboto-mono text-base"
       ref={selectorRef}
     >
-      <div
+      <div className="flex w-32 items-center justify-between font-roboto-mono text-xs text-white">
+        <div>ETH/USDT</div>
+        <div>4h</div>
+      </div>
+
+      <div className="mt-4 flex items-center text-white">
+        <div className="py-1 pr-1 text-xs">Volume</div>
+        <div className="p-1 text-xs text-greenPrimary">0.0094</div>
+        <div className="p-1 text-xs">0.0001</div>
+        <div className="bg-redPrimary/20 p-1 text-xs text-redPrimary">
+          0.0093
+        </div>
+      </div>
+
+      {/* <div
         className="selected-timeframe"
         onMouseOver={() => setHoveringSelector(true)}
         onMouseLeave={() => setHoveringSelector(false)}
@@ -125,7 +138,7 @@ const ResolutionSelector = (props: ResolutionSelectorProps) => {
             </li>
           ))}
         </ul>
-      )}
+      )} */}
     </div>
   );
 };

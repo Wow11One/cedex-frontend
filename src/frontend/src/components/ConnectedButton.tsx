@@ -4,6 +4,7 @@ import React, { type PropsWithChildren } from "react";
 import { useConnectWallet } from "@/contexts/ConnectWalletContext";
 
 import { Button } from "./Button";
+import { SmallWalletIcon } from "./icons/SmallWalletIcon";
 
 export const ConnectedButton: React.FC<
   PropsWithChildren<{ className?: string }>
@@ -15,14 +16,17 @@ export const ConnectedButton: React.FC<
     <>
       {!connected ? (
         <Button
-          className={`w-[182px] whitespace-nowrap !leading-[22px] tracking-[0.32px] ${className}`}
-          variant="primary"
+          className={` !leading-[22px] tracking-[0.32px] ${className}`}
+          variant="outlined"
           onClick={(e) => {
             e.preventDefault();
             connectWallet();
           }}
         >
-          CONNECT WALLET
+          <div className="flex items-center justify-center gap-2">
+            <SmallWalletIcon className="h-4 w-4" />
+            <div className="whitespace-nowrap">Connect wallet</div>
+          </div>
         </Button>
       ) : (
         children

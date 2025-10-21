@@ -101,39 +101,8 @@ export default function Faucet({
         <title>Faucet | Econia</title>
       </Head>
       <div className="flex h-screen flex-col">
-        <Header logoHref={`/market/${allMarketData[0].market_id}`} />
-        <main className="flex h-full w-full">
-          <div className="flex w-full">
-            {TYPE_TAGS.map((typeTag, i) => (
-              <div
-                className={`flex flex-1 flex-col items-center justify-center gap-10 ${
-                  i === 0 ? "border-r border-r-neutral-600" : ""
-                }`}
-                key={i}
-              >
-                <h2 className="font-jost text-6xl font-bold text-white">
-                  {coinInfoList[i].symbol}
-                </h2>
-                <p className="font-roboto-mono text-gray-400">
-                  Balance: {balanceQueries[i].data ?? "-"}{" "}
-                  {coinInfoList[i].symbol}
-                </p>
-                <ConnectedButton>
-                  <Button
-                    variant="primary"
-                    className="px-6 py-[10px] !leading-5"
-                    onClick={async () => await mintCoin(typeTag, i)}
-                    disabled={isLoadingArray[i]}
-                  >
-                    {isLoadingArray[i]
-                      ? "Loading..."
-                      : `Get ${coinInfoList[i].symbol}`}
-                  </Button>
-                </ConnectedButton>
-              </div>
-            ))}
-          </div>
-        </main>
+        <Header logoHref={`/dashboard/${allMarketData[0].market_id}`} />
+        <main className="flex h-full w-full"></main>
       </div>
     </>
   );

@@ -21,6 +21,8 @@ import { TypeTag } from "@/utils/TypeTag";
 
 import { OrderEntryInfo } from "./OrderEntryInfo";
 import { OrderEntryInputWrapper } from "./OrderEntryInputWrapper";
+import { MarketInput } from "@/components/MarketInput";
+import { Checkbox } from "@/components/Checkbox";
 type LimitFormValues = {
   price: string | undefined;
   size: string;
@@ -30,10 +32,11 @@ export const HI_PRICE = 4294967295;
 export const MIN_PRICE = 1;
 
 export const LimitOrderEntry: React.FC<{
+  tab: "Market" | "Limit";
   marketData: ApiMarket;
   side: Side;
   onDepositWithdrawClick?: () => void;
-}> = ({ marketData, side, onDepositWithdrawClick }) => {
+}> = ({ marketData, side, onDepositWithdrawClick, tab }) => {
   const { signAndSubmitTransaction, aptosClient } = useAptos();
   const {
     handleSubmit,
@@ -59,12 +62,18 @@ export const LimitOrderEntry: React.FC<{
   });
   const [percent, setPercent] = useState(0);
 
+  const [price, setPrice] = useState<string>("0,00");
+  const [size, setSize] = useState<string>("0,00");
+  const [sizeSelect, setSizeSelect] = useState<string>("ETH");
+  const [isReduce, setIsReduce] = useState<boolean>(true);
+  const [isProfit, setIsProfit] = useState<boolean>(false);
+
   const { balance } = useBalance(marketData);
   const watchPrice = watch("price", undefined);
 
   const watchSize = watch("size");
 
-  const { price } = useOrderEntry();
+  //const { price } = useOrderEntry();
 
   useEffect(() => {
     if (price) {
@@ -287,137 +296,172 @@ export const LimitOrderEntry: React.FC<{
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="md:mx-4">
-        <OrderEntryInputWrapper
-          startAdornment="Price"
-          endAdornment={marketData.quote.symbol}
-          labelFor="price"
-          className="mb-4"
-        >
-          <input
-            type="number"
-            step="any"
-            placeholder="0.00"
-            {...register("price", {
-              required: "PLEASE INPUT PRICE",
-              min: {
-                value: MIN_PRICE,
-                message: "Min price is: " + MIN_PRICE,
-              },
-              max: {
-                value: HI_PRICE,
-                message: "Max price is: " + HI_PRICE,
-              },
-            })}
-            className="w-full bg-transparent pb-3 pl-14 pr-14 pt-3 text-right font-roboto-mono text-xs font-light text-neutral-400 outline-none"
-          />
-        </OrderEntryInputWrapper>
-        <div className="relative">
-          <p className="absolute top-[-1rem] text-xs text-red">
-            {errors.price != null && errors.price.message}
-          </p>
-        </div>
-        <RangeSlider
-          className="relative left-[50%] mb-4 mt-4 translate-x-[-50%]"
-          style={{
-            width: "calc(100% - 7px)",
-          }}
-          variant={"primary"}
-          value={percent}
-          onChange={(value) => {
-            setPercent(Number(value));
-          }}
-        />
-      </div>
-      <hr className="border-neutral-600" />
-      <div className="mt-4 md:mx-4">
-        <OrderEntryInputWrapper
-          startAdornment="Amount"
-          endAdornment={marketData.base?.symbol}
-          labelFor="size"
-          className="mb-4"
-        >
-          <input
-            type="number"
-            step="any"
-            placeholder="0.00"
-            {...register("size", {
-              required: "PLEASE INPUT AMOUNT",
-              min: 0,
-              onChange: (e) => {
-                const price = Number(getValues("price"));
-                if (!isNaN(price) && !isNaN(e.target.value)) {
-                  const totalSize = (price * e.target.value).toString();
-                  setSTotalSize(totalSize);
-                } else {
-                  setSTotalSize("");
-                }
-              },
-            })}
-            className="w-full bg-transparent pb-3 pl-14 pr-14 pt-3 text-right font-roboto-mono text-xs font-light text-neutral-400 outline-none"
-          />
-        </OrderEntryInputWrapper>
-        <div className="relative">
-          <p className="absolute top-[-1rem] text-xs text-red">
-            {errors.size != null && errors.size.message}
-          </p>
-        </div>
-        <OrderEntryInputWrapper
-          startAdornment="Total"
-          endAdornment={marketData.quote?.symbol}
-        >
-          <input
-            type="number"
-            step="any"
-            placeholder="0.00"
-            {...register("totalSize", { disabled: true })}
-            className="w-full bg-transparent pb-3 pl-14 pr-14 pt-3 text-right font-roboto-mono text-xs font-light text-neutral-400 outline-none"
-          />
-        </OrderEntryInputWrapper>
-      </div>
-      <hr className="my-4 border-neutral-600" />
-      <div className="flex flex-col gap-4 md:mx-4 md:mb-4">
-        <OrderEntryInfo label={`EST. FEE`} value={estimateFee} />
-        <ConnectedButton className="w-full">
-          {isSufficient ? (
-            <Button
-              type="submit"
-              variant={side === "buy" ? "green" : "red"}
-              className="py-[10px] !leading-5 tracking-[0.32px]"
-            >
-              {side === "buy" ? "BUY" : "SELL"} {marketData.base?.symbol}
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              variant="blue"
-              className="whitespace-nowrap py-[10px] uppercase !leading-5 tracking-[0.32px]"
-              onClick={(e) => {
-                e.preventDefault();
-                onDepositWithdrawClick && onDepositWithdrawClick();
-              }}
-            >
-              Add funds to continue
-            </Button>
+    <form>
+      <div className="mt-4 flex h-full max-h-full flex-1 flex-col justify-between md:mx-4">
+        <div className="flex flex-col gap-4 font-medium">
+          <div className="flex items-center justify-between font-roboto-mono">
+            <div className="text-xs font-medium text-graySecondary">
+              Available to trade
+            </div>
+            <div className="text-xs text-white">0,00 ETH</div>
+          </div>
+
+          <div className="flex items-center justify-between font-roboto-mono">
+            <div className="text-xs text-graySecondary ">Current Position</div>
+            <div className="text-xs text-white">0,00 ETH</div>
+          </div>
+
+          {tab === "Limit" && (
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center justify-between gap-3 font-roboto-mono">
+                <div className="whitespace-nowrap text-xs text-graySecondary">
+                  Price USD
+                </div>
+                <div className="text-xs text-white">
+                  <MarketInput
+                    className="max-w-[170px]"
+                    onChange={(price) => setPrice(price)}
+                    rightText="Mid"
+                    value={price}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-3 font-roboto-mono">
+                <div className="whitespace-nowrap text-xs text-graySecondary">
+                  Size
+                </div>
+                <div className="text-xs text-white">
+                  <MarketInput
+                    className="max-w-[170px]"
+                    onChange={(size) => setSize(size)}
+                    rightText={sizeSelect}
+                    value={size}
+                    selectOptions={["ETH", "BTC", "USDT", "BNB", "SOL"]}
+                    onSelectChange={(sizeSelect) => setSizeSelect(sizeSelect)}
+                  />
+                </div>
+              </div>
+            </div>
           )}
-        </ConnectedButton>
-        <OrderEntryInfo
-          label={`${marketData.base?.symbol} AVAILABLE`}
-          value={`${balance?.base_available ? balance?.base_available : "--"}`}
-          className="cursor-pointer"
-          onClick={() => {
-            setValue(
-              "size",
-              balance?.base_available ? balance?.base_available.toString() : "",
-            );
-          }}
-        />
-        <OrderEntryInfo
-          label={`${marketData.quote?.symbol} AVAILABLE`}
-          value={`${balance?.quote_available ? balance.quote_available : "--"}`}
-        />
+
+          {tab === "Market" && (
+            <div className="flex items-center justify-between font-roboto-mono">
+              <div className="text-xs text-graySecondary">Size</div>
+              <div className="flex items-center gap-1">
+                <div className="text-xs text-white">0,00000 ETH</div>
+                <div className="h-[18px] w-[1px] bg-greenSecondary" />
+                <div className="text-xs text-graySecondary">0,00 ETH</div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between font-roboto-mono">
+            <div className="relative h-[20px] w-[180px] rounded-md bg-greenTertiary p-0.5">
+              <div className="h-full w-[22px] rounded-md bg-greenPrimary" />
+              <div className="absolute top-[5px] flex items-center">
+                <div className="ml-[10px] h-[10px] w-[1px] bg-greenSecondary" />
+                <div className="ml-8 h-[10px] w-[1px] bg-greenSecondary" />
+                <div className="ml-8 h-[10px] w-[1px] bg-greenSecondary" />
+                <div className="ml-8 h-[10px] w-[1px] bg-greenSecondary" />
+                <div className="ml-8 h-[10px] w-[1px] bg-greenSecondary" />
+              </div>
+            </div>
+            <div className="text-xs text-white">0%</div>
+          </div>
+
+          <div
+            className={`flex flex-col gap-2 ${
+              tab === "Limit" ? "visible" : "invisible"
+            }`}
+          >
+            <div className="flex items-center gap-1.5 font-roboto-mono">
+              <Checkbox id="reduce" checked={isReduce} onChange={setIsReduce} />
+              <div className="select-none text-xs font-medium text-graySecondary">
+                <label htmlFor="reduce">Reduce Only</label>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 font-roboto-mono">
+              <Checkbox id="profit" checked={isProfit} onChange={setIsProfit} />
+              <div className="select-none text-xs font-medium text-graySecondary">
+                <label htmlFor="profit">Take Profit / Stop Loss</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12 w-full">
+          <Button className="w-full" variant="secondary">
+            Enable trading
+          </Button>
+
+          <div className="mt-4 flex flex-col gap-4">
+            <div className="flex items-center justify-between font-roboto-mono">
+              <div className="text-xs text-graySecondary">
+                Liquidation price
+              </div>
+              <div className="text-xs text-white">N/A</div>
+            </div>
+
+            <div className="flex items-center justify-between font-roboto-mono">
+              <div className="text-xs text-graySecondary">Order Value</div>
+              <div className="text-xs text-white">N/A</div>
+            </div>
+
+            <div className="flex items-center justify-between font-roboto-mono">
+              <div className="text-xs text-graySecondary">Margin Required</div>
+              <div className="text-xs text-white">N/A</div>
+            </div>
+
+            {tab === "Limit" && (
+              <div className="flex items-center justify-between font-roboto-mono">
+                <div className="text-xs text-graySecondary">Slippage</div>
+                <div className="text-xs text-greenPrimary">
+                  Est.0% / Max: 8.00%
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between font-roboto-mono">
+              <div className="text-xs text-graySecondary">Fees</div>
+              <div className="text-xs text-white">0.0450% / 0.0150%</div>
+            </div>
+
+            {tab === "Limit" && (
+              <>
+                <Button className="w-full" variant="secondary">
+                  Deposit
+                </Button>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    className="flex w-full items-center gap-0.5 bg-transparent !px-3 !py-1 text-sm"
+                    variant="secondary"
+                  >
+                    Perps <PerpsSpotIcon /> Spot
+                  </Button>
+                  <Button
+                    className="w-full bg-transparent !py-1 text-sm"
+                    variant="secondary"
+                  >
+                    Withdraw
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </form>
   );
 };
+
+const PerpsSpotIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <path
+      d="M10.6667 2L13.3334 4.66667M13.3334 4.66667L10.6667 7.33333M13.3334 4.66667H2.66675M5.33341 14L2.66675 11.3333M2.66675 11.3333L5.33341 8.66667M2.66675 11.3333H13.3334"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);

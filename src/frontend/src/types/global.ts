@@ -3,6 +3,7 @@ export type Direction = "buy" | "sell";
 export type PriceLevel = {
   price: number;
   size: number;
+  total?: number;
 };
 
 export type Orderbook = {

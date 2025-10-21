@@ -124,17 +124,6 @@ export const MarketAccountCard: React.FC<{
             </div>
           </div>
         </div>
-        <Button
-          variant="secondary"
-          onClick={() => {
-            onDepositWithdrawClick(market);
-          }}
-          className={
-            "flex items-center !px-[18px] pt-[10px] !text-xs uppercase !leading-[11.5px]"
-          }
-        >
-          Deposit/withdraw
-        </Button>
       </div>
 
       <div>

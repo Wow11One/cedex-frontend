@@ -196,10 +196,7 @@ export const OrderDetailsModalContent: React.FC<
   })();
 
   return (
-    <div
-      style={{ backgroundImage: `url(${bg.src})` }}
-      className="w-full bg-neutral-800 p-6"
-    >
+    <div className="w-full bg-greenBackground p-6">
       <div className="text-center text-lg font-bold">Order Details</div>
       <div className="flex flex-col pt-2  font-roboto-mono text-sm">
         <RowDetails label="Order ID">{orderId}</RowDetails>

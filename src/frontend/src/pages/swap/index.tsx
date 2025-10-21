@@ -23,10 +23,10 @@ export default function Swap({ allMarketData }: Props) {
         <title>Swap | Econia</title>
       </Head>
       <div className="flex h-screen w-full flex-col font-roboto-mono">
-        <Header logoHref={`/market/${allMarketData[0].market_id}`} />
+        <Header logoHref={`/dashboard/${allMarketData[0].market_id}`} />
         <div className="flex flex-col items-center">
           <div className="mt-8 w-1/4">
-            <div className="border p-3 text-center font-roboto-mono text-xs text-gray-300">
+            <div className="text-gray-300 border p-3 text-center font-roboto-mono text-xs">
               This is a testnet interface. All coins are used for testing
               purposes and have no real value. If you are connecting a wallet,
               make sure it is connected to Aptos testnet.

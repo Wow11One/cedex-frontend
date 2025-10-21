@@ -91,7 +91,7 @@ const AutoConnect = () => {
 
 const WalletItemClassName =
   "relative flex h-[45px] w-full items-center p-4 text-neutral-600 ring-1 ring-neutral-600 " +
-  "transition-all hover:text-blue hover:ring-blue [&:hover>.arrow-wrapper]:bg-blue [&:hover>.arrow-wrapper]:ring-blue " +
+  "transition-all hover:text-greenPrimary hover:ring-greenPrimary [&:hover>.arrow-wrapper]:bg-greenPrimary [&:hover>.arrow-wrapper]:ring-greenPrimary " +
   "[&:hover>div>.arrow]:-rotate-45";
 const WalletIconClassName =
   "ml-2 font-jost text-base font-medium text-neutral-500";
@@ -145,9 +145,9 @@ export function ConnectWalletContextProvider({ children }: PropsWithChildren) {
                 wallet={wallet}
                 key={wallet.name}
                 className={WalletItemClassName}
-                onClick={() => {
+                onClick={async () => {
                   try {
-                    connect(wallet.name);
+                    await connect(wallet.name);
                   } catch (e) {
                     if (e instanceof Error) {
                       toast.error(e.message);

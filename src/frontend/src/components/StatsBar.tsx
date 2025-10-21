@@ -1,4 +1,3 @@
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { useQuery } from "@tanstack/react-query";
 import { useWindowSize } from "@uidotdev/usehooks";
 import BigNumber from "bignumber.js";
@@ -25,6 +24,9 @@ import { MarketIconPair } from "./MarketIconPair";
 import { BaseModal } from "./modals/BaseModal";
 import { TokenSymbol } from "./TokenSymbol";
 import { SelectMarketContent } from "./trade/DepositWithdrawModal/SelectMarketContent";
+import { SmallArrowUpIcon } from "./icons/SmallArrowUpIcon";
+import { PythNetworkIcon } from "./icons/PythNetworkIcon";
+import { ChevronDownIcon } from "./icons/ChevronDownIcon";
 
 const DEFAULT_TOKEN_ICON = "/tokenImages/default.svg";
 
@@ -163,7 +165,7 @@ export const StatsBar: React.FC<{
   const { width } = useWindowSize();
 
   useEffect(() => {
-    setIsSmallWindow(width! < 640);
+    //setIsSmallWindow(width! < 640);
   }, [width]);
 
   return (
@@ -184,7 +186,7 @@ export const StatsBar: React.FC<{
               toast.error("Selected market is undefined, please try again.");
               return;
             }
-            router.push(`/market/${name}`);
+            router.push(`/dashboard/${name}`);
           }}
         />
       </BaseModal>
@@ -197,26 +199,28 @@ export const StatsBar: React.FC<{
           please use a larger screen.
         </div>
       )}
-      <div className="hidden justify-between border-b border-neutral-600 px-[29.19px] py-3 md:flex lg:pr-[46.24px]">
-        <div className="flex  overflow-x-clip whitespace-nowrap">
+      <div className="justify-between border-b border-greenSecondary  py-3">
+        <div className="flex whitespace-nowrap">
           <button
-            className="flex items-center outline-none "
-            onClick={() => {
-              setIsModalOpen(true);
-            }}
+            className={`flex w-full items-center gap-2 rounded bg-[#0a1f1a] px-2 py-1.5 text-white  transition-colors lg:w-auto
+                    ${
+                      false
+                        ? "rounded-b-none border-2 border-b-0 !border-greenPrimary"
+                        : "border-2 border-greenSecondary hover:border-greenPrimary/60"
+                    }
+                  `}
           >
-            <MarketIconPair
-              baseAssetIcon={iconData?.baseAssetIcon}
-              quoteAssetIcon={iconData?.quoteAssetIcon}
-            />
-            <div className="ml-2 min-w-[130px] lg:min-w-[160px]">
-              <div className="flex gap-3 font-roboto-mono text-base font-medium text-neutral-300">
-                {baseSymbol} - {quoteSymbol}
-                <ChevronDownIcon className="my-auto ml-1 h-[18px] w-[18px] text-white" />
-              </div>
+            <div className="flex flex-1 items-center gap-2">
+              <img width={32} src="/eth.png" alt="eth" />
+              <div className="w-16 text-left">ETH</div>
             </div>
+            {false ? (
+              <ChevronDownIcon className="rotate-180 text-greenPrimary" />
+            ) : (
+              <ChevronDownIcon className="text-graySecondary" />
+            )}
           </button>
-          <div className="block md:hidden">
+          {/* <div className="block md:hidden">
             <p className="font-roboto-mono font-light">
               <span className="inline-block min-w-[4em] text-xl text-white">
                 {isFetchingPriceInfo && isFirstFetch ? (
@@ -244,10 +248,10 @@ export const StatsBar: React.FC<{
                 )}
               </span>
             </p>
-          </div>
-          <div className="ml-[28.83px] hidden md:block">
-            <span className="font-roboto-mono text-xs font-light text-neutral-500">
-              LAST PRICE <TokenSymbol symbol={quoteSymbol} />
+          </div> */}
+          <div className="ml-4 hidden md:block">
+            <span className="font-roboto-mono text-xs font-light text-graySecondary">
+              Market price
             </span>
             <p className="font-roboto-mono text-xs font-light text-white">
               {isFetchingPriceInfo && isFirstFetch ? (
@@ -255,13 +259,19 @@ export const StatsBar: React.FC<{
               ) : priceInfo?.last_price != undefined ? (
                 priceInfo.last_price
               ) : (
-                "-"
+                <div className="flex items-center gap-1.5">
+                  <div>$4,312.9076</div>
+                  <div className="flex items-center gap-0.5 rounded-sm bg-greenPrimary/20 px-1 py-0.5 text-greenPrimary">
+                    <SmallArrowUpIcon />
+                    <div>0.099</div>
+                  </div>
+                </div>
               )}
             </p>
           </div>
-          <div className="ml-4 hidden md:block lg:ml-[21.4px]">
-            <span className="font-roboto-mono text-xs font-light text-neutral-500">
-              24H CHANGE
+          <div className="ml-4 hidden md:block ">
+            <span className="font-roboto-mono text-xs font-light text-graySecondary">
+              Oracle price
             </span>
             <p className="font-roboto-mono text-xs font-light text-white">
               <span className="inline-block min-w-[70px] text-white">
@@ -271,7 +281,12 @@ export const StatsBar: React.FC<{
                   plusMinus(priceInfo.price_change_nominal) +
                   priceInfo.price_change_nominal
                 ) : (
-                  "-"
+                  <div className="flex items-center gap-0.5">
+                    <div>$4,312.9076</div>
+                    <div className="px-1 py-0.5">
+                      <PythNetworkIcon />
+                    </div>
+                  </div>
                 )}
               </span>
               {priceInfo?.price_change_percentage != undefined && (
@@ -295,9 +310,9 @@ export const StatsBar: React.FC<{
               )}
             </p>
           </div>
-          <div className="ml-4 hidden md:block lg:ml-[28.83px]">
-            <span className="font-roboto-mono text-xs font-light uppercase text-neutral-500">
-              24h high
+          <div className="ml-4 hidden md:block">
+            <span className="font-roboto-mono text-xs font-light text-graySecondary">
+              24h volume
             </span>
             <p className="font-roboto-mono text-xs font-light text-white">
               {isFetchingPriceInfo && isFirstFetch ? (
@@ -305,13 +320,18 @@ export const StatsBar: React.FC<{
               ) : priceInfo?.high_price != undefined ? (
                 priceInfo.high_price
               ) : (
-                "-"
+                <div className="flex items-center gap-1.5">
+                  <div>$224,312.9</div>
+                  <div className="invisible px-1 py-1">a</div>
+                  {/* <div className="flex items-center gap-0.5 rounded-sm bg-greenPrimary/20 px-1 py-0.5 text-greenPrimary">
+                    </div> */}
+                </div>
               )}
             </p>
           </div>
-          <div className="ml-4 hidden md:block lg:ml-[21.4px]">
-            <span className="font-roboto-mono text-xs font-light uppercase text-neutral-500">
-              24h low
+          <div className="ml-4 hidden md:block">
+            <span className="font-roboto-mono text-xs font-light uppercase text-graySecondary">
+              Funding rate
             </span>
             <p className="font-roboto-mono text-xs font-light text-white">
               {isFetchingPriceInfo && isFirstFetch ? (
@@ -319,208 +339,37 @@ export const StatsBar: React.FC<{
               ) : priceInfo?.low_price != undefined ? (
                 priceInfo.low_price
               ) : (
-                "-"
-              )}
-            </p>
-          </div>
-          <div className="ml-4 hidden md:block lg:ml-[21.4px]">
-            <span className="font-roboto-mono text-xs font-light text-neutral-500">
-              24H VOLUME <TokenSymbol symbol={baseSymbol} />
-            </span>
-            <p className="font-roboto-mono text-xs font-light text-white">
-              {isFetchingPriceInfo && isFirstFetch ? (
-                <Skeleton />
-              ) : priceInfo?.base_volume != undefined ? (
-                priceInfo.base_volume.toLocaleString(
-                  undefined,
-                  priceInfo.base_volume > 10000
-                    ? { maximumFractionDigits: 0 }
-                    : {},
-                )
-              ) : (
-                "-"
-              )}
-            </p>
-          </div>
-          <div className="ml-4 hidden md:block lg:ml-5">
-            <span className="font-roboto-mono text-xs font-light text-neutral-500">
-              24H VOLUME <TokenSymbol symbol={quoteSymbol} />
-            </span>
-            <p className="font-roboto-mono text-xs font-light text-white">
-              {isFetchingPriceInfo && isFirstFetch ? (
-                <Skeleton />
-              ) : priceInfo?.quote_volume != undefined ? (
-                priceInfo.quote_volume.toLocaleString(
-                  undefined,
-                  priceInfo.quote_volume > 10000
-                    ? {
-                        maximumFractionDigits: 0,
-                      }
-                    : {},
-                )
-              ) : (
-                "-"
+                <div className="flex items-center gap-1">
+                  <div className="text-greenPrimary">+0.00044%</div>
+                  <div>/</div>
+                  <div>07:54:19</div>
+                  <div className="invisible px-1 py-1">a</div>
+                </div>
               )}
             </p>
           </div>
         </div>
-
-        <SocialMediaIcons className={"my-auto hidden md:block"} />
       </div>
-      <div className="flex h-[120px] flex-shrink-0 flex-col justify-center border-b border-neutral-600 px-[29.28px] pr-[30.85px] md:hidden">
-        <div className="flex w-full justify-between">
-          <div className="flex h-fit items-center">
-            <MarketIconPair
-              baseAssetIcon={iconData?.baseAssetIcon}
-              quoteAssetIcon={iconData?.quoteAssetIcon}
-            />
-            <div className="ml-4 min-w-[160px]">
-              <button
-                className="flex font-roboto-mono text-base font-medium text-neutral-300"
-                onClick={() => {
-                  setIsModalOpen(true);
-                }}
-              >
-                {selectedMarket.name.split("-").join("  -  ")}
-                <ChevronDownIcon className="my-auto ml-5 h-[18px] w-[18px] text-white" />
-              </button>
-            </div>
+      <div className="my-3 flex items-center gap-8 font-roboto-mono text-sm">
+        <div className="grid grid-cols-3 rounded-md bg-greenTertiary p-1 font-roboto-mono text-white">
+          <div className="flex items-center justify-center">15m</div>
+          <div className="flex items-center justify-center font-roboto-mono">
+            1h
           </div>
-          <div className="">
-            <p className="font-roboto-mono font-light">
-              <span className="inline-block min-w-[3.5em]  text-base font-medium text-white">
-                {isFetchingPriceInfo && isFirstFetch ? (
-                  <Skeleton />
-                ) : priceInfo?.last_price != undefined ? (
-                  ` $${priceInfo.last_price}`
-                ) : (
-                  "-"
-                )}
-              </span>
-              <span
-                className={`block  text-xs ${
-                  (priceInfo?.price_change_nominal || 0) < 0
-                    ? "text-red"
-                    : "text-green"
-                }`}
-              >
-                {isFetchingPriceInfo && isFirstFetch ? (
-                  <Skeleton />
-                ) : priceInfo?.price_change_nominal != undefined ? (
-                  plusMinus(priceInfo.price_change_nominal) +
-                  priceInfo.price_change_nominal
-                ) : (
-                  "-"
-                )}
-              </span>
-            </p>
+          <div className="flex items-center justify-center whitespace-nowrap rounded-md bg-greenPrimary px-2.5 py-0.5 font-medium text-black">
+            4h
           </div>
         </div>
-        <div className="mt-[5.73px] flex gap-4 pl-[0.07px]">
-          <div className="flex gap-3">
-            <span className="font-roboto-mono text-xs font-light uppercase text-neutral-500">
-              high
-            </span>
-            <span className="min-w-[4em] font-roboto-mono text-xs font-normal text-white">
-              {isFetchingPriceInfo && isFirstFetch ? (
-                <Skeleton />
-              ) : priceInfo?.high_price != undefined ? (
-                priceInfo.high_price
-              ) : (
-                "-"
-              )}
-            </span>
-          </div>
 
-          <div className="flex gap-3">
-            <span className="font-roboto-mono text-xs font-light uppercase text-green">
-              BID
-            </span>
-            <span className="min-w-[3em] font-roboto-mono text-xs font-normal text-white">
-              {orderBook.isLoading ? (
-                <Skeleton />
-              ) : highestBid?.price ? (
-                toDecimalPrice({
-                  price: highestBid.price,
-                  marketData: selectedMarket,
-                }).toString()
-              ) : (
-                "-"
-              )}
-            </span>
-          </div>
-          <div className="flex gap-3">
-            <span className="min-w-[75px] font-roboto-mono text-xs  font-light text-neutral-500">
-              VOL <TokenSymbol symbol={baseSymbol} />
-            </span>
-            <span className="min-w-[4em] font-roboto-mono text-xs font-normal text-white">
-              {isFetchingPriceInfo && isFirstFetch ? (
-                <Skeleton />
-              ) : priceInfo?.base_volume != undefined ? (
-                priceInfo.base_volume.toLocaleString(
-                  undefined,
-                  priceInfo.base_volume > 10000
-                    ? { maximumFractionDigits: 0 }
-                    : {},
-                )
-              ) : (
-                "-"
-              )}
-            </span>
-          </div>
+        <div className="flex items-center gap-2">
+          <img className="h-4 w-4" src="/candlestick.png" alt="candlestick" />
+          <img className="h-4 w-4" src="/combo-chart.png" alt="combo" />
         </div>
-        <div className="mt-1 flex gap-4 pl-[0.07px]">
-          <div className="flex gap-3">
-            <span className="min-w-[28.81px] font-roboto-mono text-xs font-light uppercase text-neutral-500">
-              {"low "}
-            </span>
-            <span className="min-w-[4em] font-roboto-mono text-xs font-normal text-white">
-              {isFetchingPriceInfo && isFirstFetch ? (
-                <Skeleton />
-              ) : priceInfo?.low_price != undefined ? (
-                priceInfo.low_price
-              ) : (
-                "-"
-              )}
-            </span>
-          </div>
 
-          <div className="flex gap-3">
-            <span className="font-roboto-mono text-xs font-light uppercase text-red">
-              ASK
-            </span>
-            <span className="min-w-[3em] font-roboto-mono text-xs font-normal text-white">
-              {orderBook.isLoading ? (
-                <Skeleton />
-              ) : lowestAsk?.price ? (
-                toDecimalPrice({
-                  price: lowestAsk.price,
-                  marketData: selectedMarket,
-                }).toString()
-              ) : (
-                "-"
-              )}
-            </span>
-          </div>
-          <div className="flex gap-3">
-            <span className="min-w-[75px] font-roboto-mono text-xs font-light text-neutral-500">
-              VOL <TokenSymbol symbol={quoteSymbol} />
-            </span>
-            <span className="min-w-[4em] font-roboto-mono text-xs font-normal text-white">
-              {isFetchingPriceInfo && isFirstFetch ? (
-                <Skeleton />
-              ) : priceInfo?.quote_volume != undefined ? (
-                priceInfo.quote_volume.toLocaleString(
-                  undefined,
-                  priceInfo.quote_volume > 10000
-                    ? { maximumFractionDigits: 0 }
-                    : {},
-                )
-              ) : (
-                "-"
-              )}
-            </span>
-          </div>
+        <div className="flex items-center gap-1.5">
+          <img className="h-4 w-4" src="/formula-fx.png" alt="candlestick" />
+          <div className="text-white">Indicators</div>
+          <ChevronDownIcon className="ml-4 text-white" />
         </div>
       </div>
     </>

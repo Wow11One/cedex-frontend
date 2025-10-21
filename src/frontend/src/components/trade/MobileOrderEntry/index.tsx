@@ -4,6 +4,7 @@ import { BaseModal } from "@/components/modals/BaseModal";
 import { type ApiMarket } from "@/types/api";
 
 import { OrderEntry } from "../OrderEntry";
+import { Button } from "@/components/Button";
 
 const MobileOrderEntry = ({
   marketData,
@@ -34,20 +35,15 @@ const MobileOrderEntry = ({
     });
   };
   return (
-    <div className="z-20 md:hidden">
-      <div className="fixed bottom-0 left-0 flex w-full gap-6 bg-fade px-6 py-4">
-        <button
+    <div className=" md:hidden">
+      <div className="fixed bottom-0 left-0 z-[25] flex w-full gap-6 bg-fade px-6 py-4">
+        <Button
+          variant="secondary"
           onClick={openModal("buy")}
-          className="h-9 w-[calc(50%-12px)] cursor-pointer bg-green text-center font-medium text-neutral-800"
+          className="w-full"
         >
-          Buy
-        </button>
-        <button
-          onClick={openModal("sell")}
-          className="h-9 w-[calc(50%-12px)] cursor-pointer bg-red text-center font-medium text-neutral-800"
-        >
-          Sell
-        </button>
+          Buy/Sell
+        </Button>
       </div>
 
       <div className="">

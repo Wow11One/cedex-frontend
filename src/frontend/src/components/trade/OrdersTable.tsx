@@ -21,6 +21,7 @@ import { toDecimalPrice, toDecimalSize } from "@/utils/econia";
 
 import { BaseModal } from "../modals/BaseModal";
 import { OrderDetailsModalContent } from "./OrderDetailsModalContent";
+import { CicleXIcon } from "../icons/CircleXIcon";
 
 const columnHelper = createColumnHelper<ApiOrder>();
 
@@ -111,199 +112,105 @@ export const OrdersTable: React.FC<{
   const columns = useMemo(
     () => [
       columnHelper.accessor("created_at", {
-        header: () => <span className="pl-4">Time Placed</span>,
+        header: () => <span className="pl-4">Coin</span>,
         cell: (info) => (
-          <span className="flex gap-2 pl-4 text-neutral-500">
-            <span>
-              {new Date(info.getValue()).toLocaleString("en-US", {
-                month: "numeric",
-                day: "2-digit",
-                year: "2-digit",
-              })}
-            </span>
-            <span>
-              {new Date(info.getValue()).toLocaleString("en-US", {
-                hour: "numeric",
-                minute: "numeric",
-                second: "numeric",
-                hour12: false,
-              })}
-            </span>
-          </span>
+          <div className="flex flex-col items-start gap-1 pl-4 font-roboto-mono text-xs text-white">
+            <div>ETH</div>
+            <div className="text-redPrimary">20x Short</div>
+          </div>
         ),
         size: 174.19,
       }),
       columnHelper.display({
         header: "Name",
-        cell: () => name,
-        size: 105,
+        cell: (info) => (
+          <div className="flex flex-col items-start gap-1 font-roboto-mono text-xs text-white">
+            <div>0.0012 ETH</div>
+            <div className="text-graySecondary">$208.23</div>
+          </div>
+        ),
       }),
       columnHelper.accessor("order_type", {
-        header: "Type",
-        cell: (info) => info.getValue().toUpperCase() || "-",
-        size: 75,
+        header: "Position Value",
+        cell: (info) => (
+          <div className="flex flex-col items-start gap-1 font-roboto-mono text-xs text-white">
+            <div>$6.799,02</div>
+          </div>
+        ),
       }),
       columnHelper.accessor("direction", {
-        header: "Side",
-        cell: (info) => {
-          const direction = info.getValue();
-          if (direction === "bid" || direction === "buy") {
-            return <span className="text-green">BID</span>;
-          } else {
-            return <span className="text-red">ASK</span>;
-          }
-        },
-        size: 60,
+        header: "Mark Prise",
+        cell: (info) => (
+          <div className="flex flex-col items-start gap-1 font-roboto-mono text-xs text-white">
+            <div>1.799,02</div>
+          </div>
+        ),
       }),
       columnHelper.accessor("price", {
-        header: "Limit price",
-        cell: (info) => {
-          const price = info.getValue();
-          if (price !== null && typeof price === "number") {
-            return (
-              <>
-                <span>
-                  {toDecimalPrice({
-                    price,
-                    marketData,
-                  }).toNumber()}
-                </span>
-                <span className="ml-2 text-neutral-600">{quoteSymbol}</span>
-              </>
-            );
-          } else {
-            return "";
-          }
-        },
-        size: 112,
+        header: "PnL (ROE %)",
+        cell: (info) => (
+          <div className="flex flex-col items-start gap-1 font-roboto-mono text-xs text-greenPrimary">
+            <div>+$0.62</div>
+            <div>(+5.43%)</div>
+          </div>
+        ),
       }),
       columnHelper.accessor("average_execution_price", {
-        header: "AVG EXEC. PRICE",
-        cell: (info) => {
-          const avg = info.getValue();
-          if (avg !== null) {
-            return (
-              <>
-                <span>
-                  {toDecimalPrice({
-                    price: avg,
-                    marketData,
-                  }).toNumber()}
-                </span>
-                <span className="ml-2 text-neutral-600">{quoteSymbol}</span>
-              </>
-            );
-          } else {
-            return "";
-          }
-        },
-        size: 142,
+        header: "Liquid price",
+        cell: (info) => (
+          <div className="flex flex-col items-start gap-2 font-roboto-mono text-xs text-white">
+            <div>N / A</div>
+          </div>
+        ),
       }),
       columnHelper.accessor("remaining_size", {
-        header: "RMNG SIZE",
-        cell: (info) => {
-          const remaining = info.getValue();
-          return (
-            <>
-              <span>
-                {toDecimalSize({
-                  size: remaining,
-                  marketData,
-                }).toNumber()}
-              </span>
-              <span className="ml-2 text-neutral-600">{baseSymbol}</span>
-            </>
-          );
-        },
-        size: 112,
+        header: "Margin",
+        cell: (info) => (
+          <div className="flex flex-col items-start gap-2 font-roboto-mono text-xs text-white">
+            <div>$210.44</div>
+          </div>
+        ),
       }),
       columnHelper.accessor("total_filled", {
-        header: "Total",
-        cell: (info) => {
-          const total = info.getValue();
-          if (total !== null)
-            return (
-              <>
-                <span>
-                  {toDecimalSize({
-                    size: total,
-                    marketData,
-                  }).toNumber()}
-                </span>
-                <span className="ml-2 text-neutral-600">{baseSymbol}</span>
-              </>
-            );
-          return "";
-        },
-        size: 112,
+        header: "Funding",
+        cell: (info) => (
+          <div className="flex flex-col items-start gap-2 font-roboto-mono text-xs text-redPrimary">
+            <div>-0.01</div>
+          </div>
+        ),
       }),
       columnHelper.display({
-        header: "Total VOL.",
-        cell: (info) => {
-          const row = info.row.original;
-          const { total_filled, average_execution_price } = row;
-          if (!total_filled || !average_execution_price) return "";
-          const convertedAvgPrice = toDecimalPrice({
-            price: average_execution_price,
-            marketData,
-          }).toNumber();
-          const convertedTotalFilled = toDecimalSize({
-            size: total_filled,
-            marketData,
-          }).toNumber();
-          const totalVolume = convertedTotalFilled * convertedAvgPrice;
-          return `${totalVolume.toLocaleString(undefined, {
-            maximumFractionDigits: 5,
-          })} ${quoteSymbol}`;
-        },
-        size: 142,
+        header: "TP/SL",
+        cell: (info) => (
+          <div className="flex flex-col items-start gap-2 font-roboto-mono text-xs text-white">
+            <div>--</div>
+          </div>
+        ),
       }),
       columnHelper.accessor("order_status", {
-        header: "Status",
-        cell: (info) => {
-          const status = info.getValue();
-          let className = "";
-          switch (status) {
-            case "open":
-              className = "text-blue";
-              break;
-            case "cancelled":
-              className = "text-red";
-              break;
-            case "closed":
-              className = "text-green";
-              break;
-          }
-          return <span className={className}>{status.toUpperCase()}</span>;
-        },
-        size: 97,
-      }),
-      columnHelper.display({
-        header: "Cancel",
-        cell: (info) => {
-          const orderInfo = info.row.original;
-          const { order_status: status } = orderInfo;
-          if (status !== "open") return "";
-          return (
-            <button
-              className="text-red hover:text-[#DC2B2B]"
-              onClick={(e) => {
-                e.stopPropagation();
-                cancelOrder(orderInfo);
-              }}
-            >
-              CANCEL
-            </button>
-          );
-        },
-        size: 60,
+        header: () => (
+          <div className="flex flex-col items-start gap-2 font-roboto-mono text-xs text-greenPrimary">
+            <div className="flex items-center gap-1 bg-greenTertiary px-1.5 py-1 transition-colors hover:bg-greenSecondary">
+              <CicleXIcon />
+              <div>Close All</div>
+            </div>
+          </div>
+        ),
+        cell: (info) => (
+          <div className="flex flex-col items-start gap-2 font-roboto-mono text-xs text-greenPrimary">
+            <div className="flex items-center gap-1 bg-greenTertiary px-1.5 py-1 transition-colors hover:bg-greenSecondary">
+              <CicleXIcon />
+              <div>Close</div>
+            </div>
+          </div>
+        ),
       }),
     ],
     [baseSymbol, cancelOrder, marketData, name, quoteSymbol],
   );
 
   const table = useReactTable({
-    data: data || [],
+    data: [{} as any, {} as any],
     columns,
     state: {
       sorting,
@@ -334,11 +241,11 @@ export const OrdersTable: React.FC<{
       <table
         className={"w-full table-fixed" + (className ? ` ${className}` : "")}
       >
-        <thead className="sticky top-0 h-[30px] bg-neutral-800 bg-noise">
+        <thead className="sticky top-0 h-[30px] bg-greenBackground">
           <tr className="h-[30px]">
             {table.getFlatHeaders().map((header) => (
               <th
-                className="cursor-pointer select-none text-left font-roboto-mono text-xs font-normal uppercase tracking-[0.24px] text-neutral-500 transition-all hover:text-blue"
+                className="cursor-pointer select-none text-left font-roboto-mono text-xs font-normal tracking-[0.24px] text-graySecondary transition-all"
                 key={header.id}
                 onClick={header.column.getToggleSortingHandler()}
                 style={{
@@ -356,24 +263,20 @@ export const OrdersTable: React.FC<{
           </tr>
           <tr>
             {table.getFlatHeaders().map((header) => (
-              <td className="p-0" key={header.id}>
-                <div className="h-[1px] w-full bg-neutral-600"></div>
-              </td>
+              <td className="p-0" key={header.id}></td>
             ))}
           </tr>
         </thead>
 
         <tbody>
-          {!connected ? (
-            <></>
-          ) : isLoading || !data ? (
+          {isLoading || !data ? (
             <>
               <tr>
                 {table.getAllColumns().map((column, i) => (
                   <td
                     className={`${
                       i === 0
-                        ? "pl-4 text-left text-neutral-500"
+                        ? "pl-4 text-left text-graySecondary"
                         : i === 6
                         ? ""
                         : ""
@@ -388,7 +291,6 @@ export const OrdersTable: React.FC<{
               </tr>
             </>
           ) : (
-            data.length !== 0 &&
             table.getRowModel().rows.map((row) => (
               <tr
                 className="cursor-pointer transition-colors hover:bg-neutral-600/30"
@@ -411,11 +313,6 @@ export const OrdersTable: React.FC<{
           )}
         </tbody>
       </table>
-      {!isLoading && data && data.length === 0 && (
-        <div className="flex h-[calc(100%-37.52px)] flex-col items-center justify-center font-roboto-mono text-xs font-light uppercase tracking-[0.2px] text-neutral-500">
-          no orders to show
-        </div>
-      )}
     </div>
   );
 };
