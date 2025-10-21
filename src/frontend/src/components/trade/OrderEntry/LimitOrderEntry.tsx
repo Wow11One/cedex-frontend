@@ -219,7 +219,7 @@ export const LimitOrderEntry: React.FC<{
       "noRestriction",
       "abort",
     );
-    await signAndSubmitTransaction({ data: payload });
+    // await signAndSubmitTransaction({ data: payload });
   };
 
   const isSufficient = useMemo(() => {

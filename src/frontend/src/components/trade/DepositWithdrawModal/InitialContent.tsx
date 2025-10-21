@@ -91,7 +91,7 @@ export const InitialContent: React.FC<{
               BigInt(selectedMarket.market_id),
               BigInt(NO_CUSTODIAN),
             );
-            await signAndSubmitTransaction({ data: payload });
+            // await signAndSubmitTransaction({ data: payload });
           }}
           variant="primary"
         >

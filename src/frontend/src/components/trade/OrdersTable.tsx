@@ -95,7 +95,7 @@ export const OrdersTable: React.FC<{
           ],
           function: `${ECONIA_ADDR}::market::cancel_order_user`,
         };
-        await signAndSubmitTransaction({ data: payload });
+        // await signAndSubmitTransaction({ data: payload });
         refetch();
 
         // close modal if it's open

@@ -72,7 +72,7 @@ export default function Faucet({
           typeTag.toString(),
           BigInt(Math.floor(AMOUNTS[i] * 10 ** coinInfoList[i].decimals)),
         );
-        await signAndSubmitTransaction({ data: payload });
+        // await signAndSubmitTransaction({ data: payload });
         await queryClient.invalidateQueries([
           "balance",
           coinInfoList[i].name,

@@ -191,7 +191,7 @@ export const MarketOrderEntry: React.FC<{
       "abort",
     );
 
-    await signAndSubmitTransaction({ data: payload });
+    // await signAndSubmitTransaction({ data: payload });
   };
 
   return (

@@ -124,7 +124,7 @@ const DepositWithdrawForm: React.FC<{
             BigInt(selectedMarket.market_id),
             BigInt(toRawCoinAmount(amount, selectedCoin.decimals).toString()),
           );
-    await signAndSubmitTransaction({ data: payload });
+    // await signAndSubmitTransaction({ data: payload });
   };
 
   const handleRegisterMarketAccount = async () => {
@@ -138,17 +138,17 @@ const DepositWithdrawForm: React.FC<{
       BigInt(selectedMarket.market_id),
       BigInt(NO_CUSTODIAN),
     );
-    const res = await signAndSubmitTransaction({ data: payload });
-    if (res) {
-      // refetch user market accounts
-      await queryClient.invalidateQueries({
-        queryKey: [
-          "userCheckRegisteredMarketAccount",
-          account?.address,
-          selectedMarket.market_id,
-        ],
-      });
-    }
+    // const res = await signAndSubmitTransaction({ data: payload });
+    // if (res) {
+    //   // refetch user market accounts
+    //   await queryClient.invalidateQueries({
+    //     queryKey: [
+    //       "userCheckRegisteredMarketAccount",
+    //       account?.address,
+    //       selectedMarket.market_id,
+    //     ],
+    //   });
+    // }
   };
 
   return (
